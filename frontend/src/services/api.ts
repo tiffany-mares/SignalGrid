@@ -20,3 +20,9 @@ export async function fetchIncidents(
 
   return resp.json();
 }
+
+export async function injectDemoIncidents(): Promise<{ message: string; count: number }> {
+  const resp = await fetch(`${API_BASE}/inject-demo`, { method: "POST" });
+  if (!resp.ok) throw new Error(`Inject failed: ${resp.status}`);
+  return resp.json();
+}
