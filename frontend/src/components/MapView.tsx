@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import type { Incident } from "../types/incident";
 import { fetchIncidents } from "../services/api";
+import IncidentPanel from "./IncidentPanel";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || "";
 
@@ -47,6 +48,9 @@ export default function MapView() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+
+  const handleClosePanel = useCallback(() => setSelectedIncident(null), []);
 
   // Fetch incidents from API
   useEffect(() => {
