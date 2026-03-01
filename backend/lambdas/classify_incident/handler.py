@@ -1,12 +1,15 @@
 import os
 import json
 import re
+import urllib.request
+import urllib.parse
 
 import boto3
 
 BEDROCK_REGION = os.environ.get("BEDROCK_REGION", "us-east-1")
 MODEL_ID = os.environ.get("BEDROCK_MODEL_ID", "anthropic.claude-3-haiku-20240307-v1:0")
 TABLE_NAME = os.environ.get("INCIDENTS_TABLE", "Incidents")
+MAPBOX_TOKEN = os.environ.get("MAPBOX_TOKEN", "")
 
 bedrock = boto3.client("bedrock-runtime", region_name=BEDROCK_REGION)
 dynamodb = boto3.resource("dynamodb", region_name=BEDROCK_REGION)
@@ -40,6 +43,35 @@ def score_to_label(score: int) -> str:
     if score >= 25:
         return "medium"
     return "low"
+
+
+def geocode(location_text: str) -> tuple[float | None, float | None]:
+    """Forward geocode location_text via Mapbox Geocoding API. Returns (lat, lng)."""
+    if not MAPBOX_TOKEN or not location_text:
+        return None, None
+
+    try:
+        encoded = urllib.parse.quote(location_text)
+        url = (
+            f"https://api.mapbox.com/geocoding/v5/mapbox.places/{encoded}.json"
+            f"?access_token={MAPBOX_TOKEN}&limit=1"
+        )
+        req = urllib.request.Request(url)
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode())
+
+        features = data.get("features", [])
+        if not features:
+            print(f"  Geocode: no results for '{location_text}'")
+            return None, None
+
+        lng, lat = features[0]["center"]
+        print(f"  Geocode: '{location_text}' → ({lat}, {lng})")
+        return lat, lng
+
+    except Exception as e:
+        print(f"  Geocode error for '{location_text}': {e}")
+        return None, None
 
 
 def extract_json(raw: str) -> dict:
@@ -82,31 +114,40 @@ def classify_text(text: str) -> dict:
     return extract_json(raw_text)
 
 
-def update_incident(incident_id: str, classification: dict):
+def update_incident(incident_id: str, classification: dict, lat: float | None, lng: float | None):
     urgency_score = int(classification.get("urgency_score", 0))
+
+    update_expr = (
+        "SET disaster_type = :dt, "
+        "urgency_score = :us, "
+        "urgency_label = :ul, "
+        "location_text = :lt, "
+        "summary = :sm, "
+        "confidence = :cf, "
+        "recommended_response = :rr, "
+        "classified = :cl"
+    )
+
+    attr_values = {
+        ":dt": classification.get("disaster_type", "other"),
+        ":us": urgency_score,
+        ":ul": score_to_label(urgency_score),
+        ":lt": classification.get("location_text", ""),
+        ":sm": classification.get("summary", ""),
+        ":cf": str(classification.get("confidence", 0)),
+        ":rr": classification.get("recommended_response", ""),
+        ":cl": True,
+    }
+
+    if lat is not None and lng is not None:
+        update_expr += ", lat = :lat, lng = :lng"
+        attr_values[":lat"] = str(lat)
+        attr_values[":lng"] = str(lng)
 
     table.update_item(
         Key={"incident_id": incident_id},
-        UpdateExpression=(
-            "SET disaster_type = :dt, "
-            "urgency_score = :us, "
-            "urgency_label = :ul, "
-            "location_text = :lt, "
-            "summary = :sm, "
-            "confidence = :cf, "
-            "recommended_response = :rr, "
-            "classified = :cl"
-        ),
-        ExpressionAttributeValues={
-            ":dt": classification.get("disaster_type", "other"),
-            ":us": urgency_score,
-            ":ul": score_to_label(urgency_score),
-            ":lt": classification.get("location_text", ""),
-            ":sm": classification.get("summary", ""),
-            ":cf": str(classification.get("confidence", 0)),
-            ":rr": classification.get("recommended_response", ""),
-            ":cl": True,
-        },
+        UpdateExpression=update_expr,
+        ExpressionAttributeValues=attr_values,
     )
 
 
@@ -141,8 +182,12 @@ def handle_single(event: dict) -> dict:
         classification = classify_text(text)
         print(f"Classification: {json.dumps(classification)}")
 
+        lat, lng = geocode(classification.get("location_text", ""))
+        classification["lat"] = lat
+        classification["lng"] = lng
+
         if incident_id:
-            update_incident(incident_id, classification)
+            update_incident(incident_id, classification, lat, lng)
             print(f"Updated incident {incident_id} in DynamoDB")
 
         return {
@@ -183,10 +228,11 @@ def handle_batch() -> dict:
 
         try:
             classification = classify_text(text)
-            update_incident(incident_id, classification)
+            lat, lng = geocode(classification.get("location_text", ""))
+            update_incident(incident_id, classification, lat, lng)
             classified_count += 1
             print(f"  Classified {incident_id}: {classification.get('disaster_type')} "
-                  f"(urgency={classification.get('urgency_score')})")
+                  f"(urgency={classification.get('urgency_score')}, loc={lat},{lng})")
         except Exception as e:
             errors += 1
             print(f"  ERROR on {incident_id}: {e}")
