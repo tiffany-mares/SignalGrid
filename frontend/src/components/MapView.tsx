@@ -45,6 +45,7 @@ function incidentsToGeoJSON(
 export default function MapView() {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
+  const incidentsRef = useRef<Incident[]>([]);
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +63,7 @@ export default function MapView() {
         const data = await fetchIncidents({ limit: 200 });
         if (!cancelled) {
           setIncidents(data.incidents);
+          incidentsRef.current = data.incidents;
           setError(null);
         }
       } catch (err) {
@@ -191,7 +193,7 @@ export default function MapView() {
         if (!feature) return;
 
         const clickedId = feature.properties?.incident_id;
-        const match = incidents.find((i) => i.incident_id === clickedId);
+        const match = incidentsRef.current.find((i) => i.incident_id === clickedId);
         if (match) {
           setSelectedIncident(match);
           if (feature.geometry.type === "Point") {
