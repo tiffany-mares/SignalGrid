@@ -240,36 +240,36 @@ export default function MapView() {
     <div style={{ position: "relative", width: "100%", height: "100vh" }}>
       <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
 
-      {/* Right-side incident detail panel */}
+      <FilterBar
+        filters={filters}
+        onChange={handleFiltersChange}
+        incidentCount={incidents.length}
+        loading={loading}
+      />
+
       {selectedIncident && (
         <IncidentPanel incident={selectedIncident} onClose={handleClosePanel} />
       )}
 
-      {/* Status overlay */}
-      <div
-        style={{
-          position: "absolute",
-          top: 12,
-          left: 12,
-          background: "rgba(17,24,39,0.9)",
-          color: "#e5e7eb",
-          padding: "10px 16px",
-          borderRadius: 8,
-          fontSize: 13,
-          fontFamily: "system-ui, sans-serif",
-          backdropFilter: "blur(8px)",
-          border: "1px solid rgba(255,255,255,0.1)",
-        }}
-      >
-        <strong style={{ fontSize: 15 }}>CrisisPulse</strong>
-        <div style={{ marginTop: 4, color: "#9ca3af" }}>
-          {loading
-            ? "Loading incidents..."
-            : error
-              ? `Error: ${error}`
-              : `${incidents.length} incidents loaded`}
+      {error && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: 16,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "rgba(239,68,68,0.9)",
+            color: "white",
+            padding: "8px 16px",
+            borderRadius: 8,
+            fontSize: 13,
+            fontFamily: "system-ui, sans-serif",
+            zIndex: 10,
+          }}
+        >
+          {error}
         </div>
-      </div>
+      )}
     </div>
   );
 }
