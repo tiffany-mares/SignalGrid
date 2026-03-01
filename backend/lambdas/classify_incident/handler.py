@@ -24,24 +24,21 @@ SYSTEM_PROMPT = """You are a disaster classification AI. Given a text snippet ab
 }
 
 Scoring guide for urgency_score:
-- 0-20: Minor incident, no immediate danger (small tremor, contained brush fire)
-- 21-40: Moderate, localized impact (minor flooding, small fire near structures)
-- 41-60: Significant, affecting community (city-level flooding, growing wildfire)
-- 61-80: Severe, large-scale impact (major earthquake damage, hurricane landfall, mass evacuation)
-- 81-100: Critical/catastrophic, mass casualties likely (M7+ earthquake in populated area, dam breach, Category 4+ hurricane)
+- 0-24: Low — minor incident, no immediate danger (small tremor, contained brush fire)
+- 25-49: Medium — moderate, localized impact (minor flooding, small fire near structures, localized storm damage)
+- 50-74: High — significant, large-scale impact (city-level flooding, major wildfire, hurricane landfall, mass evacuation)
+- 75-100: Critical — catastrophic, mass casualties likely (M7+ earthquake in populated area, dam breach, Category 4+ hurricane)
 
 Return ONLY the JSON object. No markdown, no explanation, no extra text."""
 
 
 def score_to_label(score: int) -> str:
-    if score >= 81:
+    if score >= 75:
         return "critical"
-    if score >= 61:
+    if score >= 50:
         return "high"
-    if score >= 41:
+    if score >= 25:
         return "medium"
-    if score >= 21:
-        return "low"
     return "low"
 
 
