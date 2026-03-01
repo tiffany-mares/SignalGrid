@@ -13,24 +13,9 @@ CrisisPulse is a full-stack application that ingests disaster reports from multi
 
 ## Architecture
 
-```
-┌──────────────┐     ┌──────────────────────────────────────────────┐
-│  EventBridge │────▶│  IngestAndClassify Lambda                    │
-│  (every 2m)  │     │                                              │
-└──────────────┘     │  S3 (synthetic data)  ──┐                    │
-                     │  RSS feeds (GDACS, etc) ─┤──▶ Bedrock ──▶ Mapbox Geocode │
-                     │                          │        │                      │
-                     │                          │        ▼                      │
-                     │                     DynamoDB ◀────┘                      │
-                     │                        │                                 │
-                     │                        ├──▶ SNS (if critical)            │
-                     └────────────────────────┴─────────────────────────────────┘
+![CrisisPulse Architecture](docs/images/architecture.png)
 
-┌──────────┐     ┌─────────────┐     ┌──────────────────────┐     ┌───────────┐
-│  React   │────▶│ API Gateway │────▶│ GetIncidentsApi      │────▶│ DynamoDB  │
-│  + Mapbox│◀────│  REST API   │◀────│ Lambda               │◀────│           │
-└──────────┘     └─────────────┘     └──────────────────────┘     └───────────┘
-```
+Data sources (social posts, RSS feeds, public alerts) flow through the ingestion/AI pipeline (EventBridge → Lambda → Bedrock classification → Mapbox geocoding), into storage (DynamoDB + SNS alerts), and out to the React + Mapbox frontend via API Gateway.
 
 ## Data Flow
 
