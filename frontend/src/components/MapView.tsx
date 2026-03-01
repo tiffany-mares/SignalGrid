@@ -5,6 +5,7 @@ import type { Incident, IncidentFilters } from "../types/incident";
 import { fetchIncidents } from "../services/api";
 import IncidentPanel from "./IncidentPanel";
 import FilterBar from "./FilterBar";
+import DemoToggle from "./DemoToggle";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || "";
 
@@ -293,6 +294,8 @@ export default function MapView() {
       {selectedIncident && (
         <IncidentPanel incident={selectedIncident} onClose={handleClosePanel} />
       )}
+
+      <DemoToggle onInjected={() => loadIncidents(filters)} />
 
       {error && (
         <div
