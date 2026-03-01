@@ -14,6 +14,7 @@ export interface Incident {
   summary: string;
   confidence: number;
   recommended_response: string;
+  urgency_rationale?: string;
   classified: boolean;
   expires_at?: number;
 }

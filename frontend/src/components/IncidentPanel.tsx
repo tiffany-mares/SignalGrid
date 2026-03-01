@@ -85,6 +85,17 @@ export default function IncidentPanel({ incident, onClose }: IncidentPanelProps)
         <p style={styles.summaryText}>{incident.summary}</p>
       </div>
 
+      {/* Why this urgency? */}
+      {incident.urgency_rationale && (
+        <div style={styles.section}>
+          <div style={styles.sectionLabel}>Why This Urgency Score?</div>
+          <div style={styles.rationaleBox}>
+            <span style={styles.rationaleIcon}>💡</span>
+            <p style={styles.rationaleText}>{incident.urgency_rationale}</p>
+          </div>
+        </div>
+      )}
+
       {/* Recommended Response */}
       <div style={styles.section}>
         <div style={styles.sectionLabel}>Recommended Response</div>
