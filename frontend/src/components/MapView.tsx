@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import type { Incident } from "../types/incident";
+import type { Incident, IncidentFilters } from "../types/incident";
 import { fetchIncidents } from "../services/api";
 import IncidentPanel from "./IncidentPanel";
+import FilterBar from "./FilterBar";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || "";
 
