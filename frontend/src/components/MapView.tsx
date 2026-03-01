@@ -16,6 +16,23 @@ const URGENCY_COLORS: Record<string, string> = {
   critical: "#ef4444",
 };
 
+const DISASTER_TYPES = [
+  "flood", "fire", "storm", "earthquake", "volcanic",
+  "drought", "avalanche", "chemical", "other",
+] as const;
+
+const RESOURCE_MAP: Record<string, string[]> = {
+  flood: ["Water purification", "Boat rescues", "Sanitation kits"],
+  fire: ["Evacuation transport", "Air tankers", "Burn medical kits"],
+  storm: ["Emergency shelter", "Power generators", "Debris clearance"],
+  earthquake: ["Search & rescue teams", "Medical aid", "Structural engineers"],
+  volcanic: ["Evacuation support", "Respiratory masks", "Flight diversions"],
+  drought: ["Water supply", "Food aid", "Agricultural relief"],
+  avalanche: ["Search dogs", "Helicopter rescue", "Thermal blankets"],
+  chemical: ["Hazmat teams", "Decontamination", "Respiratory protection"],
+  other: ["Emergency assessment", "General aid", "Coordination support"],
+};
+
 function incidentsToGeoJSON(
   incidents: Incident[]
 ): GeoJSON.FeatureCollection<GeoJSON.Point> {
@@ -39,9 +56,70 @@ function incidentsToGeoJSON(
           recommended_response: i.recommended_response,
           confidence: i.confidence,
           timestamp: i.timestamp,
+          // Per-type flags for cluster aggregation
+          ...Object.fromEntries(
+            DISASTER_TYPES.map((t) => [`type_${t}`, i.disaster_type === t ? 1 : 0])
+          ),
         },
       })),
   };
+}
+
+function clusterLabel(avgUrgency: number): string {
+  if (avgUrgency >= 75) return "critical";
+  if (avgUrgency >= 50) return "high";
+  if (avgUrgency >= 25) return "medium";
+  return "low";
+}
+
+function buildClusterPopup(props: Record<string, number>): string {
+  const count = props.point_count || 0;
+  const avgUrgency = count > 0 ? Math.round(props.urgency_sum / count) : 0;
+  const label = clusterLabel(avgUrgency);
+  const color = URGENCY_COLORS[label] || "#6b7280";
+
+  // Find dominant type
+  let dominantType = "other";
+  let maxCount = 0;
+  for (const t of DISASTER_TYPES) {
+    const c = props[`type_${t}`] || 0;
+    if (c > maxCount) {
+      maxCount = c;
+      dominantType = t;
+    }
+  }
+
+  // Build type breakdown
+  const breakdown = DISASTER_TYPES
+    .map((t) => ({ type: t, count: props[`type_${t}`] || 0 }))
+    .filter((x) => x.count > 0)
+    .sort((a, b) => b.count - a.count);
+
+  const breakdownHtml = breakdown
+    .map((x) => `<span style="color:#9ca3af;">${x.type}</span> <strong>${x.count}</strong>`)
+    .join(" · ");
+
+  // Resource recommendations based on dominant type
+  const resources = RESOURCE_MAP[dominantType] || RESOURCE_MAP.other;
+
+  return `
+    <div style="font-family:system-ui,sans-serif; line-height:1.5; min-width:240px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <span style="background:${color}; color:white; padding:2px 10px; border-radius:4px; font-size:11px; font-weight:700; text-transform:uppercase;">
+          ${label}
+        </span>
+        <span style="font-size:13px; color:#9ca3af;">Avg ${avgUrgency}/100</span>
+      </div>
+      <div style="font-size:14px; font-weight:700; margin-bottom:4px;">${count} Incidents in Region</div>
+      <div style="font-size:12px; margin-bottom:10px;">${breakdownHtml}</div>
+      <div style="font-size:11px; text-transform:uppercase; color:#6b7280; font-weight:600; letter-spacing:0.05em; margin-bottom:4px;">
+        Recommended Resources
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:4px;">
+        ${resources.map((r) => `<span style="background:#1f2937; border:1px solid rgba(255,255,255,0.1); padding:3px 8px; border-radius:4px; font-size:12px; color:#d1d5db;">${r}</span>`).join("")}
+      </div>
+    </div>
+  `;
 }
 
 export default function MapView() {
