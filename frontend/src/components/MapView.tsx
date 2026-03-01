@@ -51,41 +51,39 @@ export default function MapView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+  const [filters, setFilters] = useState<IncidentFilters>({ limit: 200 });
 
   const handleClosePanel = useCallback(() => setSelectedIncident(null), []);
 
-  // Fetch incidents from API
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      try {
-        setLoading(true);
-        const data = await fetchIncidents({ limit: 200 });
-        if (!cancelled) {
-          setIncidents(data.incidents);
-          incidentsRef.current = data.incidents;
-          setError(null);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Failed to load");
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+  const loadIncidents = useCallback(async (f: IncidentFilters) => {
+    try {
+      setLoading(true);
+      const data = await fetchIncidents({ ...f, limit: f.limit || 200 });
+      setIncidents(data.incidents);
+      incidentsRef.current = data.incidents;
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load");
+    } finally {
+      setLoading(false);
     }
-
-    load();
-
-    // Poll every 30 seconds for new incidents
-    const interval = setInterval(load, 30000);
-
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-    };
   }, []);
+
+  const handleFiltersChange = useCallback(
+    (newFilters: IncidentFilters) => {
+      setFilters(newFilters);
+      loadIncidents(newFilters);
+    },
+    [loadIncidents]
+  );
+
+  // Initial fetch + polling
+  useEffect(() => {
+    loadIncidents(filters);
+
+    const interval = setInterval(() => loadIncidents(filters), 30000);
+    return () => clearInterval(interval);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Initialize map
   useEffect(() => {
