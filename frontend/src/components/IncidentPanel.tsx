@@ -256,6 +256,26 @@ const styles: Record<string, React.CSSProperties> = {
     lineHeight: 1.5,
     margin: 0,
   },
+  rationaleBox: {
+    display: "flex",
+    gap: 10,
+    alignItems: "flex-start",
+    background: "rgba(59,130,246,0.08)",
+    border: "1px solid rgba(59,130,246,0.2)",
+    borderRadius: 6,
+    padding: "10px 12px",
+  },
+  rationaleIcon: {
+    fontSize: 16,
+    flexShrink: 0,
+    marginTop: 1,
+  },
+  rationaleText: {
+    fontSize: 13,
+    lineHeight: 1.5,
+    margin: 0,
+    color: "#d1d5db",
+  },
   responseBox: {
     fontSize: 13,
     background: "#1f2937",
