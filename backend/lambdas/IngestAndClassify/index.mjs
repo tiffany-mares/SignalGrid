@@ -44,7 +44,8 @@ const SYSTEM_PROMPT = `You are a disaster classification AI. Given a text snippe
   "location_text": "<city, region, country extracted from text>",
   "summary": "<one sentence summary>",
   "confidence": <float 0.0-1.0>,
-  "recommended_response": "<short action: evacuate, shelter-in-place, send medical aid, monitor, send water/food>"
+  "recommended_response": "<short action: evacuate, shelter-in-place, send medical aid, monitor, send water/food>",
+  "urgency_rationale": "<1-2 sentences explaining WHY this urgency score was assigned, citing specific signals from the text>"
 }
 
 Scoring guide:
@@ -265,6 +266,7 @@ async function processPost(post, hash) {
     summary: classification.summary || "",
     confidence: classification.confidence || 0,
     recommended_response: classification.recommended_response || "",
+    urgency_rationale: classification.urgency_rationale || "",
     classified: true,
     expires_at: Math.floor(Date.now() / 1000) + TTL_DAYS * 86400,
   };
