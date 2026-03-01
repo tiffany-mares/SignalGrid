@@ -1,0 +1,280 @@
+import { useEffect, useRef, useState } from "react";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import type { Incident } from "../types/incident";
+import { fetchIncidents } from "../services/api";
+
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || "";
+
+const URGENCY_COLORS: Record<string, string> = {
+  low: "#3b82f6",
+  medium: "#f59e0b",
+  high: "#f97316",
+  critical: "#ef4444",
+};
+
+function incidentsToGeoJSON(
+  incidents: Incident[]
+): GeoJSON.FeatureCollection<GeoJSON.Point> {
+  return {
+    type: "FeatureCollection",
+    features: incidents
+      .filter((i) => i.lat != null && i.lng != null)
+      .map((i) => ({
+        type: "Feature" as const,
+        geometry: {
+          type: "Point" as const,
+          coordinates: [i.lng!, i.lat!],
+        },
+        properties: {
+          incident_id: i.incident_id,
+          disaster_type: i.disaster_type,
+          urgency_score: i.urgency_score,
+          urgency_label: i.urgency_label,
+          location_text: i.location_text,
+          summary: i.summary,
+          recommended_response: i.recommended_response,
+          confidence: i.confidence,
+          timestamp: i.timestamp,
+        },
+      })),
+  };
+}
+
+export default function MapView() {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch incidents from API
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        setLoading(true);
+        const data = await fetchIncidents({ limit: 200 });
+        if (!cancelled) {
+          setIncidents(data.incidents);
+          setError(null);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Failed to load");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    load();
+
+    // Poll every 30 seconds for new incidents
+    const interval = setInterval(load, 30000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
+
+  // Initialize map
+  useEffect(() => {
+    if (!mapContainer.current || mapRef.current) return;
+
+    const map = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: "mapbox://styles/mapbox/dark-v11",
+      center: [0, 20],
+      zoom: 2,
+    });
+
+    map.addControl(new mapboxgl.NavigationControl(), "top-right");
+    mapRef.current = map;
+
+    map.on("load", () => {
+      // Incident circles source
+      map.addSource("incidents", {
+        type: "geojson",
+        data: { type: "FeatureCollection", features: [] },
+      });
+
+      // Heatmap layer (shows density at low zoom)
+      map.addLayer({
+        id: "incidents-heat",
+        type: "heatmap",
+        source: "incidents",
+        maxzoom: 8,
+        paint: {
+          "heatmap-weight": [
+            "interpolate",
+            ["linear"],
+            ["get", "urgency_score"],
+            0, 0.1,
+            50, 0.5,
+            100, 1,
+          ],
+          "heatmap-intensity": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            0, 0.5,
+            8, 2,
+          ],
+          "heatmap-radius": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            0, 15,
+            8, 30,
+          ],
+          "heatmap-color": [
+            "interpolate",
+            ["linear"],
+            ["heatmap-density"],
+            0, "rgba(0,0,0,0)",
+            0.2, "#3b82f6",
+            0.4, "#f59e0b",
+            0.6, "#f97316",
+            0.8, "#ef4444",
+            1.0, "#dc2626",
+          ],
+          "heatmap-opacity": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            6, 0.9,
+            8, 0,
+          ],
+        },
+      });
+
+      // Circle markers (visible at higher zoom)
+      map.addLayer({
+        id: "incidents-circle",
+        type: "circle",
+        source: "incidents",
+        minzoom: 4,
+        paint: {
+          "circle-radius": [
+            "interpolate",
+            ["linear"],
+            ["get", "urgency_score"],
+            0, 5,
+            50, 9,
+            100, 16,
+          ],
+          "circle-color": [
+            "match",
+            ["get", "urgency_label"],
+            "critical", URGENCY_COLORS.critical,
+            "high", URGENCY_COLORS.high,
+            "medium", URGENCY_COLORS.medium,
+            "low", URGENCY_COLORS.low,
+            "#6b7280",
+          ],
+          "circle-stroke-width": 2,
+          "circle-stroke-color": "#ffffff",
+          "circle-opacity": 0.85,
+        },
+      });
+
+      // Popup on click
+      map.on("click", "incidents-circle", (e) => {
+        const feature = e.features?.[0];
+        if (!feature || feature.geometry.type !== "Point") return;
+
+        const props = feature.properties!;
+        const coords = feature.geometry.coordinates.slice() as [number, number];
+
+        const urgencyColor = URGENCY_COLORS[props.urgency_label] || "#6b7280";
+
+        new mapboxgl.Popup({ offset: 15, maxWidth: "320px" })
+          .setLngLat(coords)
+          .setHTML(
+            `<div style="font-family: system-ui, sans-serif; line-height: 1.4;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="background:${urgencyColor}; color:white; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; text-transform:uppercase;">
+                  ${props.urgency_label}
+                </span>
+                <span style="font-size:12px; color:#9ca3af;">${props.urgency_score}/100</span>
+              </div>
+              <strong style="font-size:14px;">${props.disaster_type.toUpperCase()}</strong>
+              <div style="font-size:12px; color:#9ca3af; margin-top:2px;">📍 ${props.location_text}</div>
+              <p style="font-size:13px; margin:8px 0 4px;">${props.summary}</p>
+              <div style="font-size:12px; color:#d1d5db; border-top:1px solid #374151; padding-top:6px; margin-top:6px;">
+                <strong>Response:</strong> ${props.recommended_response}
+              </div>
+            </div>`
+          )
+          .addTo(map);
+      });
+
+      // Cursor pointer on hover
+      map.on("mouseenter", "incidents-circle", () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+      map.on("mouseleave", "incidents-circle", () => {
+        map.getCanvas().style.cursor = "";
+      });
+    });
+
+    return () => {
+      map.remove();
+      mapRef.current = null;
+    };
+  }, []);
+
+  // Update map data when incidents change
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const updateSource = () => {
+      const source = map.getSource("incidents") as mapboxgl.GeoJSONSource;
+      if (source) {
+        source.setData(incidentsToGeoJSON(incidents));
+      }
+    };
+
+    if (map.isStyleLoaded()) {
+      updateSource();
+    } else {
+      map.on("load", updateSource);
+    }
+  }, [incidents]);
+
+  return (
+    <div style={{ position: "relative", width: "100%", height: "100vh" }}>
+      <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
+
+      {/* Status overlay */}
+      <div
+        style={{
+          position: "absolute",
+          top: 12,
+          left: 12,
+          background: "rgba(17,24,39,0.9)",
+          color: "#e5e7eb",
+          padding: "10px 16px",
+          borderRadius: 8,
+          fontSize: 13,
+          fontFamily: "system-ui, sans-serif",
+          backdropFilter: "blur(8px)",
+          border: "1px solid rgba(255,255,255,0.1)",
+        }}
+      >
+        <strong style={{ fontSize: 15 }}>CrisisPulse</strong>
+        <div style={{ marginTop: 4, color: "#9ca3af" }}>
+          {loading
+            ? "Loading incidents..."
+            : error
+              ? `Error: ${error}`
+              : `${incidents.length} incidents loaded`}
+        </div>
+      </div>
+    </div>
+  );
+}
