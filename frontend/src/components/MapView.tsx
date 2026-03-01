@@ -222,45 +222,45 @@ export default function MapView() {
     mapRef.current = map;
 
     map.on("load", () => {
-      // Incident circles source
+      // Clustered source with aggregated properties
+      const clusterProps: Record<string, mapboxgl.ExpressionSpecification> = {
+        urgency_sum: ["+", ["get", "urgency_score"]],
+      };
+      for (const t of DISASTER_TYPES) {
+        clusterProps[`type_${t}`] = ["+", ["get", `type_${t}`]];
+      }
+
       map.addSource("incidents", {
         type: "geojson",
         data: { type: "FeatureCollection", features: [] },
+        cluster: true,
+        clusterMaxZoom: 10,
+        clusterRadius: 60,
+        clusterProperties: clusterProps,
       });
 
-      // Heatmap layer (shows density at low zoom)
+      // ── Heatmap (low zoom, behind everything) ──
       map.addLayer({
         id: "incidents-heat",
         type: "heatmap",
         source: "incidents",
         maxzoom: 8,
+        filter: ["!", ["has", "point_count"]],
         paint: {
           "heatmap-weight": [
-            "interpolate",
-            ["linear"],
-            ["get", "urgency_score"],
-            0, 0.1,
-            50, 0.5,
-            100, 1,
+            "interpolate", ["linear"], ["get", "urgency_score"],
+            0, 0.1, 50, 0.5, 100, 1,
           ],
           "heatmap-intensity": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            0, 0.5,
-            8, 2,
+            "interpolate", ["linear"], ["zoom"],
+            0, 0.5, 8, 2,
           ],
           "heatmap-radius": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            0, 15,
-            8, 30,
+            "interpolate", ["linear"], ["zoom"],
+            0, 15, 8, 30,
           ],
           "heatmap-color": [
-            "interpolate",
-            ["linear"],
-            ["heatmap-density"],
+            "interpolate", ["linear"], ["heatmap-density"],
             0, "rgba(0,0,0,0)",
             0.2, "#3b82f6",
             0.4, "#f59e0b",
@@ -269,33 +269,67 @@ export default function MapView() {
             1.0, "#dc2626",
           ],
           "heatmap-opacity": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            6, 0.9,
-            8, 0,
+            "interpolate", ["linear"], ["zoom"],
+            6, 0.9, 8, 0,
           ],
         },
       });
 
-      // Circle markers (visible at higher zoom)
+      // ── Cluster circles ──
+      map.addLayer({
+        id: "clusters",
+        type: "circle",
+        source: "incidents",
+        filter: ["has", "point_count"],
+        paint: {
+          "circle-radius": [
+            "interpolate", ["linear"], ["get", "point_count"],
+            2, 20, 10, 30, 50, 45,
+          ],
+          "circle-color": [
+            "interpolate", ["linear"],
+            ["/", ["get", "urgency_sum"], ["get", "point_count"]],
+            0, "#3b82f6",
+            25, "#f59e0b",
+            50, "#f97316",
+            75, "#ef4444",
+          ],
+          "circle-stroke-width": 3,
+          "circle-stroke-color": "rgba(255,255,255,0.3)",
+          "circle-opacity": 0.85,
+        },
+      });
+
+      // ── Cluster count label ──
+      map.addLayer({
+        id: "cluster-count",
+        type: "symbol",
+        source: "incidents",
+        filter: ["has", "point_count"],
+        layout: {
+          "text-field": ["get", "point_count_abbreviated"],
+          "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
+          "text-size": 14,
+          "text-allow-overlap": true,
+        },
+        paint: {
+          "text-color": "#ffffff",
+        },
+      });
+
+      // ── Unclustered individual points ──
       map.addLayer({
         id: "incidents-circle",
         type: "circle",
         source: "incidents",
-        minzoom: 4,
+        filter: ["!", ["has", "point_count"]],
         paint: {
           "circle-radius": [
-            "interpolate",
-            ["linear"],
-            ["get", "urgency_score"],
-            0, 5,
-            50, 9,
-            100, 16,
+            "interpolate", ["linear"], ["get", "urgency_score"],
+            0, 5, 50, 9, 100, 16,
           ],
           "circle-color": [
-            "match",
-            ["get", "urgency_label"],
+            "match", ["get", "urgency_label"],
             "critical", URGENCY_COLORS.critical,
             "high", URGENCY_COLORS.high,
             "medium", URGENCY_COLORS.medium,
@@ -308,7 +342,21 @@ export default function MapView() {
         },
       });
 
-      // Open detail panel on click
+      // ── Click: cluster → popup with resource recommendations ──
+      map.on("click", "clusters", (e) => {
+        const feature = e.features?.[0];
+        if (!feature || feature.geometry.type !== "Point") return;
+
+        const props = feature.properties as Record<string, number>;
+        const coords = feature.geometry.coordinates.slice() as [number, number];
+
+        new mapboxgl.Popup({ offset: 20, maxWidth: "320px" })
+          .setLngLat(coords)
+          .setHTML(buildClusterPopup(props))
+          .addTo(map);
+      });
+
+      // ── Click: individual point → detail panel ──
       map.on("click", "incidents-circle", (e) => {
         const feature = e.features?.[0];
         if (!feature) return;
@@ -324,13 +372,15 @@ export default function MapView() {
         }
       });
 
-      // Cursor pointer on hover
-      map.on("mouseenter", "incidents-circle", () => {
-        map.getCanvas().style.cursor = "pointer";
-      });
-      map.on("mouseleave", "incidents-circle", () => {
-        map.getCanvas().style.cursor = "";
-      });
+      // ── Cursor pointer on hover for both layers ──
+      for (const layer of ["clusters", "incidents-circle"]) {
+        map.on("mouseenter", layer, () => {
+          map.getCanvas().style.cursor = "pointer";
+        });
+        map.on("mouseleave", layer, () => {
+          map.getCanvas().style.cursor = "";
+        });
+      }
     });
 
     return () => {
