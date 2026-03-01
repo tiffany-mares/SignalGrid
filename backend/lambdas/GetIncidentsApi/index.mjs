@@ -18,33 +18,34 @@ function buildFilterExpression(params) {
   const attrValues = {};
   const attrNames = {};
 
-  // Only return classified incidents with coordinates
+  // Only return classified incidents
   expressions.push("classified = :cl");
   attrValues[":cl"] = true;
 
-  // Filter by disaster type
+  // ?type=flood — filter by disaster type
   if (params.type && params.type !== "all") {
     expressions.push("disaster_type = :dt");
     attrValues[":dt"] = params.type;
   }
 
-  // Filter by urgency label
-  if (params.urgency && params.urgency !== "all") {
-    expressions.push("urgency_label = :ul");
-    attrValues[":ul"] = params.urgency;
-  }
-
-  // Filter by minimum urgency score
-  if (params.min_score) {
+  // ?minUrgency=50 — minimum urgency score
+  if (params.minUrgency) {
     expressions.push("urgency_score >= :ms");
-    attrValues[":ms"] = parseInt(params.min_score, 10);
+    attrValues[":ms"] = parseInt(params.minUrgency, 10);
   }
 
-  // Filter by time window (hours ago)
-  if (params.hours) {
-    const cutoff = new Date(
-      Date.now() - parseInt(params.hours, 10) * 3600000
-    ).toISOString();
+  // ?since=2026-02-28T10:00:00Z — only incidents after this ISO timestamp
+  // also accepts hours shorthand: ?since=6h, ?since=24h
+  if (params.since) {
+    let cutoff;
+    const hoursMatch = params.since.match(/^(\d+)h$/);
+    if (hoursMatch) {
+      cutoff = new Date(
+        Date.now() - parseInt(hoursMatch[1], 10) * 3600000
+      ).toISOString();
+    } else {
+      cutoff = params.since;
+    }
     expressions.push("#ts >= :cutoff");
     attrValues[":cutoff"] = cutoff;
     attrNames["#ts"] = "timestamp";
