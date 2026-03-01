@@ -54,7 +54,9 @@ export default function MapView() {
   const [filters, setFilters] = useState<IncidentFilters>({ limit: 200 });
 
   const handleClosePanel = useCallback(() => setSelectedIncident(null), []);
+  const filtersRef = useRef(filters);
 
+  // Full fetch — used on initial load and when filters change
   const loadIncidents = useCallback(async (f: IncidentFilters) => {
     try {
       setLoading(true);
@@ -69,19 +71,60 @@ export default function MapView() {
     }
   }, []);
 
+  // Incremental poll — fetches only incidents newer than what we have
+  const pollForNew = useCallback(async () => {
+    const current = incidentsRef.current;
+    if (current.length === 0) return;
+
+    const latestTimestamp = current.reduce(
+      (latest, i) => (i.timestamp > latest ? i.timestamp : latest),
+      ""
+    );
+
+    try {
+      setLoading(true);
+      const f = filtersRef.current;
+      const data = await fetchIncidents({
+        ...f,
+        since: latestTimestamp,
+        limit: 50,
+      });
+
+      if (data.incidents.length > 0) {
+        const existingIds = new Set(current.map((i) => i.incident_id));
+        const newOnes = data.incidents.filter(
+          (i) => !existingIds.has(i.incident_id)
+        );
+
+        if (newOnes.length > 0) {
+          const merged = [...newOnes, ...current];
+          setIncidents(merged);
+          incidentsRef.current = merged;
+          console.log(`[Poll] ${newOnes.length} new incidents merged`);
+        }
+      }
+      setError(null);
+    } catch (err) {
+      console.log(`[Poll] error: ${err}`);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const handleFiltersChange = useCallback(
     (newFilters: IncidentFilters) => {
       setFilters(newFilters);
+      filtersRef.current = newFilters;
       loadIncidents(newFilters);
     },
     [loadIncidents]
   );
 
-  // Initial fetch + polling
+  // Initial full fetch + incremental polling every 30s
   useEffect(() => {
     loadIncidents(filters);
 
-    const interval = setInterval(() => loadIncidents(filters), 30000);
+    const interval = setInterval(pollForNew, 30000);
     return () => clearInterval(interval);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
