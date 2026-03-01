@@ -1,0 +1,362 @@
+[
+  {
+    "id": "syn-001",
+    "timestamp": "2026-02-28T08:12:00Z",
+    "text": "Flash flooding reported near downtown Guelph, roads closed, people stranded on rooftops waiting for rescue.",
+    "location_text": "Guelph, Ontario, Canada"
+  },
+  {
+    "id": "syn-002",
+    "timestamp": "2026-02-28T08:30:00Z",
+    "text": "Wildfire smoke is getting worse near Kelowna, visibility low. AQI over 400. People told to stay indoors.",
+    "location_text": "Kelowna, BC, Canada"
+  },
+  {
+    "id": "syn-003",
+    "timestamp": "2026-02-28T09:00:00Z",
+    "text": "BREAKING: 7.1 magnitude earthquake hits central Turkey. Multiple buildings collapsed in Malatya. Rescue teams mobilizing. Casualties feared.",
+    "location_text": "Malatya, Turkey"
+  },
+  {
+    "id": "syn-004",
+    "timestamp": "2026-02-28T09:15:00Z",
+    "text": "Category 4 hurricane approaching Barbados. Winds 150mph. All residents urged to seek shelter immediately. Landfall in 6 hours.",
+    "location_text": "Barbados, Caribbean"
+  },
+  {
+    "id": "syn-005",
+    "timestamp": "2026-02-28T09:30:00Z",
+    "text": "Small tremor felt in San Francisco Bay Area. USGS reports M3.2. No damage reported. Shaking lasted about 5 seconds.",
+    "location_text": "San Francisco, CA, USA"
+  },
+  {
+    "id": "syn-006",
+    "timestamp": "2026-02-28T09:45:00Z",
+    "text": "Tornado touched down in Moore, Oklahoma. Multiple structures damaged. Power out for 15,000 homes. Second funnel spotted by storm chasers.",
+    "location_text": "Moore, OK, USA"
+  },
+  {
+    "id": "syn-007",
+    "timestamp": "2026-02-28T10:00:00Z",
+    "text": "URGENT: Dam breach reported near Brumadinho. Downstream villages being evacuated. Military deployed. Massive mudslide potential.",
+    "location_text": "Brumadinho, Minas Gerais, Brazil"
+  },
+  {
+    "id": "syn-008",
+    "timestamp": "2026-02-28T10:15:00Z",
+    "text": "Flooding in downtown Houston is insane. Water up to car roofs on I-45. DO NOT drive. Coast Guard launching boats for rescues.",
+    "location_text": "Houston, TX, USA"
+  },
+  {
+    "id": "syn-009",
+    "timestamp": "2026-02-28T10:30:00Z",
+    "text": "Bushfire out of control in New South Wales. 50,000 hectares burned. 12 homes destroyed. RFS crews exhausted. Air tankers from Victoria deployed.",
+    "location_text": "Blue Mountains, NSW, Australia"
+  },
+  {
+    "id": "syn-010",
+    "timestamp": "2026-02-28T10:45:00Z",
+    "text": "Earthquake M5.4 off coast of Japan. Tsunami advisory for Miyagi Prefecture. Coastal residents told to move to higher ground.",
+    "location_text": "Miyagi Prefecture, Japan"
+  },
+  {
+    "id": "syn-011",
+    "timestamp": "2026-02-28T11:00:00Z",
+    "text": "River Rhine flooding in Cologne. Water levels 8m above normal. Old town evacuated. Sandbag operations underway across the city.",
+    "location_text": "Cologne, Germany"
+  },
+  {
+    "id": "syn-012",
+    "timestamp": "2026-02-28T11:15:00Z",
+    "text": "Heatwave emergency in Phoenix. 5th consecutive day above 115F. Hospitals overwhelmed with heat stroke patients. Cooling centers at max capacity.",
+    "location_text": "Phoenix, AZ, USA"
+  },
+  {
+    "id": "syn-013",
+    "timestamp": "2026-02-28T11:30:00Z",
+    "text": "Landslide in Freetown Sierra Leone. Heavy rains caused hillside collapse. At least 50 homes buried. Rescue hampered by continued rain.",
+    "location_text": "Freetown, Sierra Leone"
+  },
+  {
+    "id": "syn-014",
+    "timestamp": "2026-02-28T11:45:00Z",
+    "text": "Minor flooding in Venice. Acqua alta reaching 110cm. St. Mark's Square under water. MOSE barriers partially activated.",
+    "location_text": "Venice, Italy"
+  },
+  {
+    "id": "syn-015",
+    "timestamp": "2026-02-28T12:00:00Z",
+    "text": "Earthquake swarm near Reykjavik. 200+ tremors in 24 hours. Largest M4.8. Volcanic eruption risk elevated. Civil protection on alert.",
+    "location_text": "Reykjavik, Iceland"
+  },
+  {
+    "id": "syn-016",
+    "timestamp": "2026-02-28T12:15:00Z",
+    "text": "Tropical storm making landfall in the Philippines. Heavy rain and flooding in Leyte province. 10,000 people in evacuation centers.",
+    "location_text": "Leyte, Philippines"
+  },
+  {
+    "id": "syn-017",
+    "timestamp": "2026-02-28T12:30:00Z",
+    "text": "CRITICAL: Chemical plant explosion in Tianjin port area. Massive fireball visible for miles. Emergency services overwhelmed. Shelter in place order issued.",
+    "location_text": "Tianjin, China"
+  },
+  {
+    "id": "syn-018",
+    "timestamp": "2026-02-28T12:45:00Z",
+    "text": "Flooding continues in Bangladesh. Sylhet district 80% underwater. 500,000 displaced. Food and medicine critically low. International aid needed.",
+    "location_text": "Sylhet, Bangladesh"
+  },
+  {
+    "id": "syn-019",
+    "timestamp": "2026-02-28T13:00:00Z",
+    "text": "Dust storm reducing visibility to zero in Riyadh. Highway pileups reported. Schools closed. Stay indoors advisory in effect.",
+    "location_text": "Riyadh, Saudi Arabia"
+  },
+  {
+    "id": "syn-020",
+    "timestamp": "2026-02-28T13:15:00Z",
+    "text": "M6.2 earthquake rocks Haiti. Port-au-Prince buildings damaged. Hospitals report incoming casualties. UN coordinating emergency response.",
+    "location_text": "Port-au-Prince, Haiti"
+  },
+  {
+    "id": "syn-021",
+    "timestamp": "2026-02-28T13:30:00Z",
+    "text": "Volcanic eruption at Mount Etna. Lava flow heading toward Catania suburbs. Airport closed. Ash cloud reaching 10km altitude.",
+    "location_text": "Mount Etna, Sicily, Italy"
+  },
+  {
+    "id": "syn-022",
+    "timestamp": "2026-02-28T13:45:00Z",
+    "text": "Blizzard conditions in Chicago. O'Hare airport closed. Wind chill -40F. Frostbite risk in minutes. Warming centers open citywide.",
+    "location_text": "Chicago, IL, USA"
+  },
+  {
+    "id": "syn-023",
+    "timestamp": "2026-02-28T14:00:00Z",
+    "text": "Ice storm knocking down power lines across Tennessee. 200,000 without electricity. Roads coated in ice. National Guard activated.",
+    "location_text": "Nashville, TN, USA"
+  },
+  {
+    "id": "syn-024",
+    "timestamp": "2026-02-28T14:15:00Z",
+    "text": "Glacial lake outburst flood in Nepal. Rapid water surge destroying bridges in Solukhumbu. Trekkers stranded near Everest base camp.",
+    "location_text": "Solukhumbu, Nepal"
+  },
+  {
+    "id": "syn-025",
+    "timestamp": "2026-02-28T14:30:00Z",
+    "text": "Flash floods in Jeddah. Cars floating through streets. Shopping malls flooded. Airport runways underwater. All flights cancelled.",
+    "location_text": "Jeddah, Saudi Arabia"
+  },
+  {
+    "id": "syn-026",
+    "timestamp": "2026-02-28T14:45:00Z",
+    "text": "Wildfire approaching Lake Tahoe from the south. Jumping containment lines. Mandatory evacuation for South Lake Tahoe. 30,000 residents fleeing.",
+    "location_text": "South Lake Tahoe, CA, USA"
+  },
+  {
+    "id": "syn-027",
+    "timestamp": "2026-02-28T15:00:00Z",
+    "text": "Derecho storm ripping through Iowa. 100mph straight-line winds. Grain silos toppled. Entire corn crop flattened. State of emergency declared.",
+    "location_text": "Cedar Rapids, IA, USA"
+  },
+  {
+    "id": "syn-028",
+    "timestamp": "2026-02-28T15:15:00Z",
+    "text": "M7.8 earthquake strikes near Kathmandu. Major structural collapse. Multiple hospitals damaged. International search and rescue requested.",
+    "location_text": "Kathmandu, Nepal"
+  },
+  {
+    "id": "syn-029",
+    "timestamp": "2026-02-28T15:30:00Z",
+    "text": "Record rainfall in Seoul. Han River at highest level in 50 years. Subways flooded. Government activating all emergency shelters.",
+    "location_text": "Seoul, South Korea"
+  },
+  {
+    "id": "syn-030",
+    "timestamp": "2026-02-28T15:45:00Z",
+    "text": "Severe thunderstorm with golf-ball sized hail hitting Dallas-Fort Worth. Thousands of cars damaged. DFW airport closed. Multiple injuries.",
+    "location_text": "Dallas, TX, USA"
+  },
+  {
+    "id": "syn-031",
+    "timestamp": "2026-02-28T16:00:00Z",
+    "text": "Forest fire near Antalya spreading toward resort areas. Tourists being relocated. 3 hotels evacuated. Turkish firefighters requesting international aid.",
+    "location_text": "Antalya, Turkey"
+  },
+  {
+    "id": "syn-032",
+    "timestamp": "2026-02-28T16:15:00Z",
+    "text": "Mudslide blocks highway near Bogota. Several vehicles trapped. Rain continues. Emergency crews working to clear debris.",
+    "location_text": "Bogota, Colombia"
+  },
+  {
+    "id": "syn-033",
+    "timestamp": "2026-02-28T16:30:00Z",
+    "text": "Flooding in Nairobi's Mathare slum. Homes washed away overnight. At least 20 missing. Red Cross setting up emergency shelters.",
+    "location_text": "Nairobi, Kenya"
+  },
+  {
+    "id": "syn-034",
+    "timestamp": "2026-02-28T16:45:00Z",
+    "text": "Peat fires burning underground in Sumatra. Surface fires spreading to plantations. Thick haze covering Singapore. Air quality unhealthy.",
+    "location_text": "Riau, Sumatra, Indonesia"
+  },
+  {
+    "id": "syn-035",
+    "timestamp": "2026-02-28T17:00:00Z",
+    "text": "Cyclone aftermath in Mozambique. Beira 90% destroyed. Cholera outbreak confirmed. WHO deploying medical teams. Death toll rising.",
+    "location_text": "Beira, Mozambique"
+  },
+  {
+    "id": "syn-036",
+    "timestamp": "2026-02-28T17:15:00Z",
+    "text": "Heavy snowfall isolating villages in northern Pakistan. Avalanche risk extreme. Army helicopters grounded by weather. Food supplies running low.",
+    "location_text": "Chitral, Pakistan"
+  },
+  {
+    "id": "syn-037",
+    "timestamp": "2026-02-28T17:30:00Z",
+    "text": "Storm surge flooding coastal areas of Vietnam. Da Nang beachfront under 1.5m water. Hotels evacuated. Typhoon center 200km offshore.",
+    "location_text": "Da Nang, Vietnam"
+  },
+  {
+    "id": "syn-038",
+    "timestamp": "2026-02-28T17:45:00Z",
+    "text": "Drought emergency declared in Cape Town. Day Zero approaching. Residents limited to 50 liters per day. Agriculture sector devastated.",
+    "location_text": "Cape Town, South Africa"
+  },
+  {
+    "id": "syn-039",
+    "timestamp": "2026-02-28T18:00:00Z",
+    "text": "Heavy rains causing sewage overflow in London. Thames Barrier closed. Underground stations flooded. Commuters stranded across the city.",
+    "location_text": "London, UK"
+  },
+  {
+    "id": "syn-040",
+    "timestamp": "2026-02-28T18:15:00Z",
+    "text": "Fire raging through Amazon rainforest near Manaus. Satellite shows 200km smoke plume. Indigenous communities at risk.",
+    "location_text": "Manaus, Amazonas, Brazil"
+  },
+  {
+    "id": "syn-041",
+    "timestamp": "2026-02-28T18:30:00Z",
+    "text": "Flooding in Jakarta after overnight downpour. Major intersections impassable. Governor declares state of emergency. Schools and offices closed.",
+    "location_text": "Jakarta, Indonesia"
+  },
+  {
+    "id": "syn-042",
+    "timestamp": "2026-02-28T18:45:00Z",
+    "text": "Strong earthquake felt in Mexico City. Things falling off shelves. Buildings swaying 30+ seconds. People running outside in panic.",
+    "location_text": "Mexico City, Mexico"
+  },
+  {
+    "id": "syn-043",
+    "timestamp": "2026-02-28T19:00:00Z",
+    "text": "Wildfire smoke advisory for Portland Oregon. AQI over 300. N95 masks recommended. Outdoor activities suspended. Schools switching to remote.",
+    "location_text": "Portland, OR, USA"
+  },
+  {
+    "id": "syn-044",
+    "timestamp": "2026-02-28T19:15:00Z",
+    "text": "Small brush fire near residential area in San Diego. 2 acres, 50% contained. One home with minor damage. No injuries.",
+    "location_text": "San Diego, CA, USA"
+  },
+  {
+    "id": "syn-045",
+    "timestamp": "2026-02-28T19:30:00Z",
+    "text": "Aftershock panic in Malatya Turkey. People refusing to enter buildings. Tent cities growing. Temperature dropping to -5C tonight. Need heaters and blankets.",
+    "location_text": "Malatya, Turkey"
+  },
+  {
+    "id": "syn-046",
+    "timestamp": "2026-02-28T19:45:00Z",
+    "text": "River levels rising dangerously in Prague. Vltava expected to crest tomorrow. Flood barriers up along Old Town. Museums moving collections upstairs.",
+    "location_text": "Prague, Czech Republic"
+  },
+  {
+    "id": "syn-047",
+    "timestamp": "2026-02-28T20:00:00Z",
+    "text": "Avalanche in Swiss Alps near Zermatt. Ski resort evacuated. 4 hikers missing. Helicopter rescue delayed by weather. Search dogs deployed.",
+    "location_text": "Zermatt, Switzerland"
+  },
+  {
+    "id": "syn-048",
+    "timestamp": "2026-02-28T20:15:00Z",
+    "text": "Tropical depression forming in Gulf of Mexico. Could strengthen to hurricane by Thursday. Gulf coast states beginning preparations.",
+    "location_text": "Gulf of Mexico"
+  },
+  {
+    "id": "syn-049",
+    "timestamp": "2026-02-28T20:30:00Z",
+    "text": "Hailstorm devastating crops in Punjab India. Farmers report total loss of wheat harvest. Grapefruit-sized hail damaging roofs and vehicles.",
+    "location_text": "Ludhiana, Punjab, India"
+  },
+  {
+    "id": "syn-050",
+    "timestamp": "2026-02-28T20:45:00Z",
+    "text": "UPDATE: Houston flooding death toll rises to 4. Coast Guard rooftop rescues ongoing. NRG Center shelter reaching capacity. Donations needed.",
+    "location_text": "Houston, TX, USA"
+  },
+  {
+    "id": "syn-051",
+    "timestamp": "2026-02-28T21:00:00Z",
+    "text": "Grass fire in Napa Valley wine country. Vineyards threatened. Mandatory evacuation for Calistoga. Smoke advisory for entire Bay Area.",
+    "location_text": "Napa Valley, CA, USA"
+  },
+  {
+    "id": "syn-052",
+    "timestamp": "2026-02-28T21:15:00Z",
+    "text": "Tsunami warning cancelled for Chile after M6.8 offshore quake. Initial scare caused evacuations in Valparaiso. All clear. No casualties.",
+    "location_text": "Valparaiso, Chile"
+  },
+  {
+    "id": "syn-053",
+    "timestamp": "2026-02-28T21:30:00Z",
+    "text": "Winter storm dropping 60cm of snow in Montreal. 200 car accidents today. Power outages affecting 80,000 homes. Metro delays across all lines.",
+    "location_text": "Montreal, QC, Canada"
+  },
+  {
+    "id": "syn-054",
+    "timestamp": "2026-02-28T21:45:00Z",
+    "text": "Moderate earthquake M4.5 near Athens Greece. Minor damage to older buildings. No casualties. Schools evacuated as precaution.",
+    "location_text": "Athens, Greece"
+  },
+  {
+    "id": "syn-055",
+    "timestamp": "2026-02-28T22:00:00Z",
+    "text": "Flooding receding in Bangkok after 3 days. Cleanup beginning. Damage assessment underway. Boil water advisory for 6 districts.",
+    "location_text": "Bangkok, Thailand"
+  },
+  {
+    "id": "syn-056",
+    "timestamp": "2026-02-28T22:15:00Z",
+    "text": "Lightning-sparked fire in Yosemite National Park. 500 acres burned. Park partially closed. Campers evacuated from Glacier Point.",
+    "location_text": "Yosemite National Park, CA, USA"
+  },
+  {
+    "id": "syn-057",
+    "timestamp": "2026-02-28T22:30:00Z",
+    "text": "Cyclone Amphan aftermath: Kolkata still without power 48 hours later. Trees blocking roads. Clean water shortage. Aid convoys stuck.",
+    "location_text": "Kolkata, India"
+  },
+  {
+    "id": "syn-058",
+    "timestamp": "2026-02-28T22:45:00Z",
+    "text": "Wildfire in Sardinia destroys 20,000 hectares. EU activating Civil Protection Mechanism. Water bombers from France and Spain arriving.",
+    "location_text": "Oristano, Sardinia, Italy"
+  },
+  {
+    "id": "syn-059",
+    "timestamp": "2026-02-28T23:00:00Z",
+    "text": "Moderate earthquake felt across Los Angeles. M4.2 centered near Pasadena. Cracked walls reported. Caltech monitoring for aftershocks.",
+    "location_text": "Pasadena, CA, USA"
+  },
+  {
+    "id": "syn-060",
+    "timestamp": "2026-02-28T23:15:00Z",
+    "text": "Flash flood warning for Mumbai. Monsoon rains exceeding 200mm in 6 hours. Local trains suspended. Avoid low-lying areas.",
+    "location_text": "Mumbai, India"
+  }
+]
