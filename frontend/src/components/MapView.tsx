@@ -185,35 +185,20 @@ export default function MapView() {
         },
       });
 
-      // Popup on click
+      // Open detail panel on click
       map.on("click", "incidents-circle", (e) => {
         const feature = e.features?.[0];
-        if (!feature || feature.geometry.type !== "Point") return;
+        if (!feature) return;
 
-        const props = feature.properties!;
-        const coords = feature.geometry.coordinates.slice() as [number, number];
-
-        const urgencyColor = URGENCY_COLORS[props.urgency_label] || "#6b7280";
-
-        new mapboxgl.Popup({ offset: 15, maxWidth: "320px" })
-          .setLngLat(coords)
-          .setHTML(
-            `<div style="font-family: system-ui, sans-serif; line-height: 1.4;">
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                <span style="background:${urgencyColor}; color:white; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; text-transform:uppercase;">
-                  ${props.urgency_label}
-                </span>
-                <span style="font-size:12px; color:#9ca3af;">${props.urgency_score}/100</span>
-              </div>
-              <strong style="font-size:14px;">${props.disaster_type.toUpperCase()}</strong>
-              <div style="font-size:12px; color:#9ca3af; margin-top:2px;">📍 ${props.location_text}</div>
-              <p style="font-size:13px; margin:8px 0 4px;">${props.summary}</p>
-              <div style="font-size:12px; color:#d1d5db; border-top:1px solid #374151; padding-top:6px; margin-top:6px;">
-                <strong>Response:</strong> ${props.recommended_response}
-              </div>
-            </div>`
-          )
-          .addTo(map);
+        const clickedId = feature.properties?.incident_id;
+        const match = incidents.find((i) => i.incident_id === clickedId);
+        if (match) {
+          setSelectedIncident(match);
+          if (feature.geometry.type === "Point") {
+            const coords = feature.geometry.coordinates as [number, number];
+            map.flyTo({ center: coords, zoom: Math.max(map.getZoom(), 5), duration: 800 });
+          }
+        }
       });
 
       // Cursor pointer on hover
@@ -253,6 +238,11 @@ export default function MapView() {
   return (
     <div style={{ position: "relative", width: "100%", height: "100vh" }}>
       <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
+
+      {/* Right-side incident detail panel */}
+      {selectedIncident && (
+        <IncidentPanel incident={selectedIncident} onClose={handleClosePanel} />
+      )}
 
       {/* Status overlay */}
       <div
