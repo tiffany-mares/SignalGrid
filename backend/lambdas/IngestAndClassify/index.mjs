@@ -24,7 +24,7 @@ const DATA_BUCKET = process.env.DATA_BUCKET || "";
 const DATA_KEY = process.env.DATA_KEY || "synthetic_posts.json";
 const BATCH_SIZE = parseInt(process.env.BATCH_SIZE || "5", 10);
 const ALERT_THRESHOLD = parseInt(process.env.ALERT_THRESHOLD || "75", 10);
-const TTL_DAYS = parseInt(process.env.TTL_DAYS || "30", 10);
+const TTL_DAYS = parseInt(process.env.TTL_DAYS || "7", 10);
 
 // ── AWS Clients ────────────────────────────────────────────────────────────
 
@@ -224,7 +224,7 @@ async function sendAlert(incident) {
 // ── Pipeline: Process single incident ──────────────────────────────────────
 
 async function processPost(post, hash) {
-  const incidentId = crypto.randomUUID();
+  const incidentId = post.id || crypto.randomUUID();
   const now = new Date().toISOString();
 
   console.log(`\nProcessing: ${post.text.slice(0, 80)}...`);
